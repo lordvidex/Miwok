@@ -8,12 +8,13 @@
     android:background="@color/tan_background"
     android:minHeight="@dimen/list_item_height">
     <ImageView
+        android:contentDescription="@string/descriptive_image"
         android:layout_width="@dimen/list_item_height"
         android:layout_height="@dimen/list_item_height"
         android:id="@+id/image" />
     <LinearLayout
         android:id="@+id/textContainer"
-        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

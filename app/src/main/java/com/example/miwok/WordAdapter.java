@@ -11,19 +11,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class WordAdapter extends ArrayAdapter<Word>{
+public class WordAdapter extends ArrayAdapter<Word> {
 
     private int mColorResourceId;
 
-    public WordAdapter(Activity context, ArrayList<Word> numbers,int colorResourceId){
-        super(context,0,numbers);
+    public WordAdapter(Activity context, ArrayList<Word> numbers, int colorResourceId) {
+        super(context, 0, numbers);
         mColorResourceId = colorResourceId;
     }
+
     @Override
-    public View getView(int position,View convertView,ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         View listItemView = convertView;
-        if(listItemView==null){
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item,parent,false);
+        if (listItemView == null) {
+            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
         Word currentWord = getItem(position);
 
@@ -32,14 +33,14 @@ public class WordAdapter extends ArrayAdapter<Word>{
         TextView englishNumbers = listItemView.findViewById(R.id.english_textView);
         englishNumbers.setText(currentWord.getEnglishWord());
         ImageView imageResource = listItemView.findViewById(R.id.image);
-        if(currentWord.hasImage()) {
+        if (currentWord.hasImage()) {
             imageResource.setImageResource(currentWord.getImageResourceId());
             imageResource.setVisibility(View.VISIBLE);
-        } else{
+        } else {
             imageResource.setVisibility(View.GONE);
         }
         View textViews = listItemView.findViewById(R.id.textContainer);
-        textViews.setBackgroundColor(ContextCompat.getColor(getContext(),mColorResourceId));
+        textViews.setBackgroundColor(ContextCompat.getColor(getContext(), mColorResourceId));
         return listItemView;
     }
 }
