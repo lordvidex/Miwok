@@ -26,12 +26,20 @@ public class WordAdapter extends ArrayAdapter<Word> {
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
+        /*Getting the position of the current Item in the listView
+        ** args currentWord;
+         */
         Word currentWord = getItem(position);
-
+        /*
+        TextView containing MiWok Word
+         */
         TextView miwokNumbers = listItemView.findViewById(R.id.miwok_textView);
         miwokNumbers.setText(currentWord.getMiwokWord());
+
         TextView englishNumbers = listItemView.findViewById(R.id.english_textView);
         englishNumbers.setText(currentWord.getEnglishWord());
+
+
         ImageView imageResource = listItemView.findViewById(R.id.image);
         if (currentWord.hasImage()) {
             imageResource.setImageResource(currentWord.getImageResourceId());
@@ -39,6 +47,7 @@ public class WordAdapter extends ArrayAdapter<Word> {
         } else {
             imageResource.setVisibility(View.GONE);
         }
+
         View textViews = listItemView.findViewById(R.id.textContainer);
         textViews.setBackgroundColor(ContextCompat.getColor(getContext(), mColorResourceId));
         return listItemView;
