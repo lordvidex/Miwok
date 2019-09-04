@@ -1,26 +1,33 @@
 package com.example.miwok;
 
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import androidx.fragment.app.Fragment;
+
 import java.util.ArrayList;
 
-public class FamilyActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class FamilyFragment extends Fragment {
     private MediaPlayer mMediaPlayer;
-    MediaPlayer.OnCompletionListener listener = new MediaPlayer.OnCompletionListener() {
+    private MediaPlayer.OnCompletionListener listener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
             releaseMediaPlayer();
         }
     };
     private AudioManager mAudioManager;
-    AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
             if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
@@ -35,12 +42,17 @@ public class FamilyActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
+    public FamilyFragment() {
+        // Required empty public constructor
+    }
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View fragmentView = inflater.inflate(R.layout.word_list,container,false);
+
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> words = new ArrayList<>();
         words.add(new Word("әpә", "father", R.drawable.family_father, R.raw.family_father));
@@ -54,8 +66,8 @@ public class FamilyActivity extends AppCompatActivity {
         words.add(new Word("ama", "grandmother", R.drawable.family_grandmother, R.raw.family_grandmother));
         words.add(new Word("paapa", "grandfather", R.drawable.family_grandfather, R.raw.family_grandfather));
 
-        WordAdapter familyAdapter = new WordAdapter(this, words, R.color.category_family);
-        ListView familyView = findViewById(R.id.rootView);
+        WordAdapter familyAdapter = new WordAdapter(getActivity(), words, R.color.category_family);
+        ListView familyView = fragmentView.findViewById(R.id.rootView);
         familyView.setAdapter(familyAdapter);
         familyView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,20 +76,14 @@ public class FamilyActivity extends AppCompatActivity {
                 releaseMediaPlayer();
                 int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    mMediaPlayer = MediaPlayer.create(FamilyActivity.this, currentWord.getAudioResourceId());
+                    mMediaPlayer = MediaPlayer.create(getActivity(), currentWord.getAudioResourceId());
                     mMediaPlayer.start();
                     mMediaPlayer.setOnCompletionListener(listener);
                 }
             }
         });
+        return fragmentView;
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        releaseMediaPlayer();
-    }
-
     private void releaseMediaPlayer() {
         if (mMediaPlayer != null) {
             //free the space and audio resource of the mediaPlayer class
@@ -86,5 +92,11 @@ public class FamilyActivity extends AppCompatActivity {
             mMediaPlayer = null;
             mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releaseMediaPlayer();
     }
 }

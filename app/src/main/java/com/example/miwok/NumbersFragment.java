@@ -1,19 +1,22 @@
 package com.example.miwok;
 
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import java.util.ArrayList;
+import android.widget.TextView;
+import androidx.fragment.app.Fragment;
 
-public class NumbersActivity extends AppCompatActivity {
-    /** MediaPlayer
-    @link {MediaPlayer} properties
-     */
+import java.util.ArrayList;
+import java.util.zip.Inflater;
+
+public class NumbersFragment extends Fragment {
     private MediaPlayer mMediaPlayer;
     MediaPlayer.OnCompletionListener listener = new MediaPlayer.OnCompletionListener() {
         @Override
@@ -39,13 +42,20 @@ public class NumbersActivity extends AppCompatActivity {
                 releaseMediaPlayer();
             }
         }
-    };
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    };
+
+
+
+    public NumbersFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.word_list,container,false);
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> numbers = new ArrayList<>();
         numbers.add(new Word("lutti", "one", R.drawable.number_one,R.raw.number_one));
@@ -58,10 +68,10 @@ public class NumbersActivity extends AppCompatActivity {
         numbers.add(new Word("kawinta", "eight", R.drawable.number_eight,R.raw.number_eight));
         numbers.add(new Word("wo'e", "nine", R.drawable.number_nine,R.raw.number_nine));
         numbers.add(new Word("na'aacha", "ten", R.drawable.number_ten,R.raw.number_ten));
-        ListView rootView = findViewById(R.id.rootView);
-        WordAdapter itemsAdapter = new WordAdapter(this, numbers, R.color.category_numbers);
-        rootView.setAdapter(itemsAdapter);
-        rootView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView listView = rootView.findViewById(R.id.rootView);
+        WordAdapter itemsAdapter = new WordAdapter(getActivity(), numbers, R.color.category_numbers);
+        listView.setAdapter(itemsAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -76,7 +86,7 @@ public class NumbersActivity extends AppCompatActivity {
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     //We have Audio Focus now and can now Start Playback
 
-                    mMediaPlayer = MediaPlayer.create(NumbersActivity.this, currentWord.getAudioResourceId());
+                    mMediaPlayer = MediaPlayer.create(getActivity(), currentWord.getAudioResourceId());
                     mMediaPlayer.start();
                     mMediaPlayer.setOnCompletionListener(listener);
 
@@ -84,12 +94,7 @@ public class NumbersActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        releaseMediaPlayer();
+        return rootView;
     }
     private void releaseMediaPlayer(){
         if(mMediaPlayer!=null) {
@@ -99,5 +104,11 @@ public class NumbersActivity extends AppCompatActivity {
             mMediaPlayer = null;
             mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releaseMediaPlayer();
     }
 }
